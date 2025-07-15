@@ -174,6 +174,11 @@ class Genius(API, PublicAPI):
             lyrics = re.sub("\n{2}", "\n", lyrics)  # Gaps between verses
         return lyrics.strip("\n")
 
+    def _is_instrumental(self, song):
+        if song.get("instrumental"):
+            return True
+        return False
+
     def _result_is_lyrics(self, song):
         """Returns False if result from Genius is not actually song lyrics.
 
@@ -427,6 +432,9 @@ class Genius(API, PublicAPI):
             song_info = self._get_item_from_search_response(
                 search_response, title, type_="song", result_type="title"
             )
+
+        if self._is_instrumental(song_info):
+            return -1 # This means that the song is instrumental
 
         # Exit search if there were no results returned from API
         # Otherwise, move forward with processing the search results
